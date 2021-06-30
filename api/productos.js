@@ -4,30 +4,36 @@ class Productos {
     }
 
     async listar() {
-        try{
+        try {
             let lecturaArchivo = fs.promises.readFile('./persistencia/productos', 'utf-8');
             let productos = JSON.parse(lecturaArchivo);
             return productos;
-        }catch{
-            console.log([])       
+        } catch {
+            console.log([])
             return []
-        }        
+        }
     }
 
     async guardar(productos) {
-        try{
-            let leerProductos = await this.listar()   
+        try {
+            let leerProductos = await this.listar()
             productos.id = leerProductos.length + 1
             this.producto.push(productos);
-            fs.promises.writeFile('./persistencia/productos', JSON.stringify(productos, null, '\t'));            
+            fs.promises.writeFile('./persistencia/productos', JSON.stringify(this.producto, null, '\t'));
         } catch {
             throw new Error('No se pudo guardar un nuevo producto')
-        }        
+        }
     }
 
     actualizar(idProducto, nuevoProducto) {
-        let leerProductos = await this.listar()   
-        leerProductos[idProducto = nuevoProducto]        
+        try {
+            let leerProductos = await this.listar()
+            leerProductos[idProducto] = nuevoProducto;
+            this.producto = leerProductos;
+            fs.promises.writeFile('./persistencia/productos', JSON.stringify(leerProductos, null, '\t'));
+        } catch {
+            throw new Error('No se pudo actualizar el producto')
+        }
     }
 
     borrar(idProducto) {
@@ -50,18 +56,18 @@ class Archivo {
             let productos = JSON.parse(lecturaArchivo)
             console.log(productos)
             return productos
-        } catch {    
-            console.log([])       
+        } catch {
+            console.log([])
             return []
         }
 
     }
-    
-    async guardar(producto) {     
-        let leidos = await this.leer()     
+
+    async guardar(producto) {
+        let leidos = await this.leer()
         producto.id = leidos.length + 1
-        leidos.push(producto)  
-            
+        leidos.push(producto)
+
         try {
             await fs.promises.writeFile(this.pathArchivo, JSON.stringify(leidos, null, '\t'));
         } catch {
