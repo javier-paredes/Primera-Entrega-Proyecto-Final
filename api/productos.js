@@ -3,7 +3,7 @@ class Productos {
         this.producto = [];
     }
 
-    async listar() {
+    async listar(idProducto) {
         try {
             let lecturaArchivo = fs.promises.readFile('./persistencia/productos', 'utf-8');
             let productos = JSON.parse(lecturaArchivo);
@@ -12,6 +12,12 @@ class Productos {
             console.log([])
             return []
         }
+    }
+
+    listarPorID(idProducto) {
+        let lecturaArchivo = fs.promises.readFile('./persistencia/productos', 'utf-8');
+        let productos = JSON.parse(lecturaArchivo);
+        return productos[idProducto];
     }
 
     async guardar(productos) {
@@ -37,49 +43,9 @@ class Productos {
     }
 
     borrar(idProducto) {
-        let productoBorrado = this.producto.splice(idProducto, 1);
-        return productoBorrado;
+        this.producto.splice(idProducto, 1);        
     }
 }
 
 module.exports = new Productos();
 
-class Archivo {
-
-    constructor(pathArchivo) {
-        this.pathArchivo = pathArchivo;
-    }
-
-    async leer() {
-        try {
-            let lecturaArchivo = await fs.promises.readFile(this.pathArchivo, 'utf-8');
-            let productos = JSON.parse(lecturaArchivo)
-            console.log(productos)
-            return productos
-        } catch {
-            console.log([])
-            return []
-        }
-
-    }
-
-    async guardar(producto) {
-        let leidos = await this.leer()
-        producto.id = leidos.length + 1
-        leidos.push(producto)
-
-        try {
-            await fs.promises.writeFile(this.pathArchivo, JSON.stringify(leidos, null, '\t'));
-        } catch {
-            throw new Error('No se pudo guardar un nuevo producto')
-        }
-
-    }
-    async borrar() {
-        try {
-            await fs.promises.unlink(this.pathArchivo);
-        } catch {
-            throw new Error('No se pudo eliminar el archivo')
-        }
-    }
-}

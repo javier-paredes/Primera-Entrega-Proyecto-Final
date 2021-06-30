@@ -1,7 +1,7 @@
 require('dotenv').config()
 const express = require('express');
 const fs = require('fs')
-const { producto } = require('./api/productos');
+const { producto, listar } = require('./api/productos');
 const productos = require('./api/productos');
 
 const routerCarrito = express.Router()
@@ -10,7 +10,9 @@ const routerProductos = express.Router()
 let admin = true;
 
 routerProductos.get('/listar/:id', (req, res) => {
-
+    let idProducto = req.params.id
+    productos.listarPorID(idProducto)
+    res.json()
 })
 
 routerProductos.post('/agregar', (req, res) => {
